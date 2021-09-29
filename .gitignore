@@ -1,2 +1,8 @@
 temp_frames
 figures
+# tex auxiliary files
+*.aux
+*.gz
+*.log
+*.out
+*.toc

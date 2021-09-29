@@ -60,7 +60,7 @@ Función que genera `n` condiciones iniciales para una persona con altura `h` pa
 
 Las condiciones iniciales se obtienen de intentar `max_iter` tiros parabólicos.
 """
-def getInitialPositions(n,h=1.46,max_iter=1000):
+def getInitialPositions(n,h=1.46,max_iter=100000):
     t = np.linspace(0,3,100)
     pos = np.zeros((n,2))
     # numero de tiros parabolicos exitosos que llevo
@@ -281,7 +281,7 @@ Funcion para hacer la animación de una simulación. Tiene los argumentos:
 * fps: numero de cuadros por segundo para el video 
 
 """
-def makeAnimation(gel_pos,vir_pos,vir_visits,colors=None,radius = None,name="test.mp4",lifeFunc=linearLife,fps=30,savename="test"):
+def makeAnimation(gel_pos,vir_pos,vir_visits,colors=None,radius = None,savename="test.mp4",lifeFunc=linearLife,fps=30):
     # obtenemos el numero de particulas de gel y de pasos de tiempo
     n_gel,t_steps = gel_pos.shape[0:2]
     # numero de viruses
@@ -306,13 +306,13 @@ def makeAnimation(gel_pos,vir_pos,vir_visits,colors=None,radius = None,name="tes
             fig = plt.figure()
             plt.grid()
             # los alphas (la intensidad del color de los viruses) se dibujan según cuanta vida tengan
-            alphas = [linearLife(vir_visits[t,i],m=40) for i in range(n_vir)]
-            # graficamos los viuses
+            alphas = [lifeFunc(vir_visits[t,i],m=40) for i in range(n_vir)]
+            # graficamos los viruses
             plt.scatter(vir_pos[:,0],vir_pos[:,1],s=100,c="black",alpha=alphas)
             for k in range(n_gel):
-                # graficamos la estela de la trayectoria de un virus
+                # graficamos la estela de la trayectoria de un gel
                 plt.plot(gel_pos[k,tail(t),0],gel_pos[k,tail(t),1],alpha=0.4,color=colors[k])
-                # graficamos un virus
+                # graficamos un gel
                 plotCircle(gel_pos[k,t,0],gel_pos[k,t,1],radius[k,t],alpha=0.7,color=colors[k])
             # limites de la grafica
             plt.xlim(mins[0],maxs[0])
@@ -327,7 +327,7 @@ def makeAnimation(gel_pos,vir_pos,vir_visits,colors=None,radius = None,name="tes
     # hacemos la animación
     print("Making animation")
     filenames = sorted(os.listdir("temp_frames"))
-    with imageio.get_writer(name, mode='I',fps=fps) as writer:
+    with imageio.get_writer(savename, mode='I',fps=fps) as writer:
         for filename in filenames:
             image = imageio.imread(os.path.join("temp_frames",filename))
             writer.append_data(image)
